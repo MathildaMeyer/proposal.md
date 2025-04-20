@@ -66,20 +66,23 @@ while running:
                 bodies.pop()
             if event.key == pygame.K_LEFT:  # Slow down motion
                 speed_factor *= 0.9
-            if event.key == pygame.K_RIGHT:  # Speed up motion
-                speed_factor *= 1.1
+            if event.key == pygame.K_RIGHT:  # Speed up motion, but limit max speed
+                speed_factor = min(speed_factor * 1.1, 3.0)  # Prevent stars from vanishing
+            if event.key == pygame.K_r:  # Reset speed to normal
+                speed_factor = 1.0
             if event.key == pygame.K_c:  # Change colors dynamically
                 for body in bodies:
                     body.color = random.choice(STAR_COLORS)
 
     # Update and draw celestial bodies with adjusted speed
     for body in bodies:
-        body.speed *= speed_factor
+        body.speed = max(body.speed * speed_factor, 0.1)  # Prevent stars from stopping completely
         body.move()
         body.draw()
 
     pygame.display.flip()  # Refresh screen
 
 pygame.quit()
+
 
 
