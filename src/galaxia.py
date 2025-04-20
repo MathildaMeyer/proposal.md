@@ -8,7 +8,7 @@ pygame.init()
 # Screen dimensions
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Galaxia 2.0 - Cosmic Generative Art")
+pygame.display.set_caption("Galaxia 2.0 - Interactive Cosmic Generative Art")
 
 # Colors
 BLACK = (0, 0, 20)  # Space background
@@ -47,6 +47,8 @@ bodies = [CelestialBody(random.randint(0, WIDTH), random.randint(0, HEIGHT),
 
 # Main loop
 running = True
+speed_factor = 1.0  # Default speed multiplier
+
 while running:
     screen.fill(BLACK)  # Dark cosmic background
 
@@ -54,12 +56,30 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # Update and draw celestial bodies
+        # Keyboard controls for interactivity
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:  # Increase celestial bodies
+                bodies.append(CelestialBody(random.randint(0, WIDTH), random.randint(0, HEIGHT), 
+                                           random.randint(2, 6), random.uniform(0.5, 2.0), 
+                                           random.choice(STAR_COLORS)))
+            if event.key == pygame.K_DOWN and len(bodies) > 0:  # Reduce celestial bodies
+                bodies.pop()
+            if event.key == pygame.K_LEFT:  # Slow down motion
+                speed_factor *= 0.9
+            if event.key == pygame.K_RIGHT:  # Speed up motion
+                speed_factor *= 1.1
+            if event.key == pygame.K_c:  # Change colors dynamically
+                for body in bodies:
+                    body.color = random.choice(STAR_COLORS)
+
+    # Update and draw celestial bodies with adjusted speed
     for body in bodies:
+        body.speed *= speed_factor
         body.move()
         body.draw()
 
     pygame.display.flip()  # Refresh screen
 
 pygame.quit()
+
 
